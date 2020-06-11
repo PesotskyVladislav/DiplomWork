@@ -41,6 +41,8 @@ type
   end;
 
   TVertexList = class(TObjectList<TVertex>)
+  strict private
+    procedure DFS(const CurrentVertex: TVertex);
   end;
 
 implementation
@@ -77,6 +79,21 @@ procedure TVertex.AddOutputIndicator(const ID: Integer; const Description: strin
 begin
   var Indicator := TIndicator.Create(ID, Description);
   FOutputIndicatorList.Add(Indicator);
+end;
+
+procedure TVertexList.DFS(const CurrentVertex: TVertex);
+begin
+  CurrentVertex.DFSColor := dfsGray;
+  for var NextVertex in CurrentVertex.NextVertex do
+  begin
+    if NextVertex.DFSColor = dfsWhite then
+      DFS(NextVertex);
+    if NextVertex.DFSColor = dfsGray then
+      NextVertex.Cycle := True;
+    if NextVertex.DFSColor = dfsBlack then
+      CurrentVertex.DFSColor := dfsBlack;
+    NextVertex.DFSColor := dfsBlack;
+  end;
 end;
 
 
