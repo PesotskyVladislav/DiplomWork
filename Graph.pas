@@ -2,6 +2,8 @@ unit Graph;
 
 interface
 
+uses
+  System.Generics.Collections;
 
 type
   TDFSColor = (dfsWhite, dfsGray, dfsBlack);
@@ -14,6 +16,16 @@ type
   public
     constructor Create(const ID: Integer; const Description: string);
     property ID: Integer read GetID;
+  end;
+
+  TIndicatorList = class(TObjectList<TIndicator>);
+
+  TVertexList = class;
+
+  TVertex = class
+  end;
+
+  TVertexList = class(TObjectList<TVertex>)
   end;
 
 implementation
