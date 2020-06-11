@@ -68,12 +68,24 @@ type
     procedure CheckGraph;
     procedure FillLinks;
     function GetDOT: string;
+    function FindVertexByName(const Name: string): TVertex;
   end;
 
 implementation
 
 uses
   System.SysUtils, System.StrUtils;
+
+
+function TVertexList.FindVertexByName(const Name: string): TVertex;
+begin
+  Result := nil;
+  for var Vertex in Self do
+    if Vertex.Name = Name then
+      Exit(Vertex);
+    if Vehicle.VIN.Equals(VinOrFrame) or Vehicle.FRAME.Equals(VinOrFrame) then
+      Exit(Vehicle);
+end;
 
 function TVertex.GetCommonTerm: Boolean;
 begin
