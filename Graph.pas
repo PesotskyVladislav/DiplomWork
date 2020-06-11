@@ -181,6 +181,7 @@ begin
       CurrentVertex.DFSColor := dfsBlack;
     NextVertex.DFSColor := dfsBlack;
   end;
+end;
 
 procedure TVertexList.CheckGraph;
 begin
