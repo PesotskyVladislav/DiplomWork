@@ -64,6 +64,8 @@ type
   TVertexList = class(TObjectList<TVertex>)
   strict private
     procedure DFS(const CurrentVertex: TVertex);
+  public
+    procedure CheckGraph;
   end;
 
 implementation
@@ -176,6 +178,15 @@ begin
     if NextVertex.DFSColor = dfsBlack then
       CurrentVertex.DFSColor := dfsBlack;
     NextVertex.DFSColor := dfsBlack;
+  end;
+
+procedure TVertexList.CheckGraph;
+begin
+  for var Vertex in Self do
+  begin
+    if Vertex.PrevVertex.Count > 0 then
+      Continue;
+    DFS(Vertex);
   end;
 end;
 
