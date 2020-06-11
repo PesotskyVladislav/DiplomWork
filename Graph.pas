@@ -66,6 +66,8 @@ type
     procedure DFS(const CurrentVertex: TVertex);
   public
     procedure CheckGraph;
+    procedure FillLinks;
+    function GetDOT: string;
   end;
 
 implementation
@@ -190,6 +192,24 @@ begin
   end;
 end;
 
+
+function TVertexList.GetDOT: string;
+begin
+  Result := Result + 'digraph G { rankdir=LR; node[label=""];';
+  for var Vertex in Self do
+  begin
+    Result := Result + Vertex.Name + '[label="' + Vertex.Name + '\n' + Vertex.Term.ToString + ' �������"';
+    if Vertex.Cycle then
+      Result := Result + ' style="filled" fillcolor="LightBlue"'
+    else if Vertex.CommonTerm then
+      Result := Result + ' style="filled" fillcolor="Moccasin"';
+    Result := Result + '];';
+    var BoldLine := Vertex.Cycle or Vertex.CommonTerm;
+    for var NextVertex in Vertex.NextVertex do
+      Result := Result + Vertex.Name + '->' + NextVertex.Name + IFThen(BoldLine, ' [penwidth=3.0]', '') + ';';
+  end;
+  Result := Result + '}';
+end;
 
 function TIndicator.GetID: Integer;
 begin
