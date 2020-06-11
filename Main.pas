@@ -4,13 +4,20 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB,
+  Data.Win.ADODB, Vcl.DBCtrls;
 
 type
   TfrmDiplom = class(TForm)
     btnGraph: TButton;
     iGraph: TImage;
     pnlGraph: TPanel;
+    ADOConnection1: TADOConnection;
+    cbPlan: TDBComboBox;
+    ADOQuery1: TADOQuery;
+    ADOStoredProc1: TADOStoredProc;
+    DataSource1: TDataSource;
+    procedure FormCreate(Sender: TObject);
     procedure btnGraphClick(Sender: TObject);
   end;
 
@@ -24,6 +31,11 @@ implementation
 uses
   Graph, ShellApi;
 
+procedure TfrmDiplom.FormCreate(Sender: TObject);
+begin
+  ADOQuery1.Open;
+end;
+
 procedure TfrmDiplom.btnGraphClick(Sender: TObject);
 const
   DOTFileName = 'graph.dot';
@@ -31,33 +43,26 @@ const
 begin
   var VertexList := TVertexList.Create;
   try
-    var Vertex1 := TVertex.Create(1, 'Сложение');
-    Vertex1.AddOutputIndicator(1, 'научились складывать');
-    VertexList.Add(Vertex1);
-
-    var Vertex2 := TVertex.Create(2, 'Вычитание');
-    Vertex2.AddInputIndicator(1, 'научились складывать');
-    Vertex2.AddInputIndicator(4, 'умеем делить');
-    Vertex2.AddOutputIndicator(2, 'умеем вычитать');
-    VertexList.Add(Vertex2);
-
-    var Vertex3 := TVertex.Create(2, 'Умножение');
-    Vertex3.AddInputIndicator(1, 'научились складывать');
-    Vertex3.AddOutputIndicator(3, 'умеем умножать');
-    VertexList.Add(Vertex3);
-
-    var Vertex4 := TVertex.Create(3, 'Деление');
-    Vertex4.AddInputIndicator(1, 'научились складывать');
-    Vertex4.AddInputIndicator(2, 'умеем вычитать');
-    Vertex4.AddInputIndicator(3, 'умеем умножать');
-    Vertex4.AddOutputIndicator(4, 'умеем делить');
-    VertexList.Add(Vertex4);
-
-    var Vertex5 := TVertex.Create(1, 'Чтение');
-    Vertex5.AddInputIndicator(1, 'научились складывать');
-    Vertex5.AddOutputIndicator(5, 'умеем читать');
-    VertexList.Add(Vertex5);
-
+    ADOStoredProc1.Close;
+    ADOStoredProc1.Parameters.ParamByName('@id_plan').Value := cbPlan.DataSource.DataSet.FieldByName('id_plan').AsInteger;
+    ADOStoredProc1.Open;
+    ADOStoredProc1.First;
+    while not AdoStoredProc1.Eof do
+    begin
+      var DisciplineName := ADOStoredProc1.FieldByName('discipline_name').AsString;
+      var Vertex: TVertex := VertexList1.FindVertexByName(DisciplineName);
+      if not Assigned(Vertex) then
+      begin
+        Vertex := TVertex.Create(ADOStoredProc1.FieldByName('term_number').AsInteger, DisciplineName);
+        VertexList.Add(Vertex);
+      end;
+      if ADOStoredProc1.FieldByName('id_indicator_type').AsInteger = 1 then
+        Vertex.AddInputIndicator(ADOStoredProc1.FieldByName('id_indicator').AsInteger, ADOStoredProc1.FieldByName('indicator_description').AsString)
+      else
+        Vertex.AddOutputIndicator(ADOStoredProc1.FieldByName('id_indicator').AsInteger, ADOStoredProc1.FieldByName('indicator_description').AsString);
+      AdoStoredProc1.Next;
+    end;
+    ADOStoredProc1.Close;
     VertexList.FillLinks;
     VertexList.CheckGraph;
     var CurrentDirectory := GetCurrentDir + '\dot\';
