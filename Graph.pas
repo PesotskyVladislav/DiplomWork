@@ -23,12 +23,47 @@ type
   TVertexList = class;
 
   TVertex = class
+  strict private
+    FCommonTerm: Boolean;
+    FCycle: Boolean;
+    FDFSColor: TDFSColor;
+    FInputIndicatorList: TIndicatorList;
+    FName: string;
+    FNextVertex: TVertexList;
+    FOutputIndicatorList: TIndicatorList;
+    FPrevVertex: TVertexList;
+    FTerm: Integer;
+  public
+    constructor Create(const Term: Integer; const Name: string);
+    destructor Destroy;
   end;
 
   TVertexList = class(TObjectList<TVertex>)
   end;
 
 implementation
+
+
+constructor TVertex.Create(const Term: Integer; const Name: string);
+begin
+  FInputIndicatorList := TIndicatorList.Create;
+  FOutputIndicatorList := TIndicatorList.Create;
+  FPrevVertex := TVertexList.Create(False);
+  FNextVertex := TVertexList.Create(False);
+  FTerm := Term;
+  FName := Name;
+  FDFSColor := dfsWhite;
+  FCycle := False;
+  FCommonTerm := False;
+end;
+
+destructor TVertex.Destroy;
+begin
+  FInputIndicatorList.Free;
+  FOutputIndicatorList.Free;
+  FPrevVertex.Free;
+  FNextVertex.Free;
+end;
 
 
 function TIndicator.GetID: Integer;
