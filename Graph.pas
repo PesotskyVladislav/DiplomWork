@@ -192,6 +192,31 @@ begin
   end;
 end;
 
+procedure TVertexList.FillLinks;
+begin
+  for var CurrentVertex: TVertex in Self do
+  begin
+    for var OutputIndicator in CurrentVertex.OutputIndicatorList do
+    begin
+      for var NextVertex: TVertex in Self do
+      begin
+        for var InputIndicator in NextVertex.InputIndicatorList do
+        begin
+          if InputIndicator.ID = OutputIndicator.ID then
+          begin
+            CurrentVertex.NextVertex.Add(NextVertex);
+            NextVertex.PrevVertex.Add(CurrentVertex);
+            if CurrentVertex.Term = NextVertex.Term then
+            begin
+              CurrentVertex.CommonTerm := True;
+              NextVertex.CommonTerm := True;
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
 
 function TVertexList.GetDOT: string;
 begin
