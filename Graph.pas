@@ -33,11 +33,32 @@ type
     FOutputIndicatorList: TIndicatorList;
     FPrevVertex: TVertexList;
     FTerm: Integer;
+    function GetCommonTerm: Boolean;
+    procedure SetCommonTerm(const Value: Boolean);
+    function GetCycle: Boolean;
+    procedure SetCycle(const Value: Boolean);
+    function GetDFSColor: TDFSColor;
+    procedure SetDFSColor(const Value: TDFSColor);
+    function GetInputIndicatorList: TIndicatorList;
+    function GetName: string;
+    function GetNextVertex: TVertexList;
+    function GetOutputIndicatorList: TIndicatorList;
+    function GetPrevVertex: TVertexList;
+    function GetTerm: Integer;
   public
     constructor Create(const Term: Integer; const Name: string);
     destructor Destroy;
     procedure AddInputIndicator(const ID: Integer; const Description: string);
     procedure AddOutputIndicator(const ID: Integer; const Description: string);
+    property CommonTerm: Boolean read GetCommonTerm write SetCommonTerm;
+    property Cycle: Boolean read GetCycle write SetCycle;
+    property DFSColor: TDFSColor read GetDFSColor write SetDFSColor;
+    property InputIndicatorList: TIndicatorList read GetInputIndicatorList;
+    property Name: string read GetName;
+    property NextVertex: TVertexList read GetNextVertex;
+    property OutputIndicatorList: TIndicatorList read GetOutputIndicatorList;
+    property PrevVertex: TVertexList read GetPrevVertex;
+    property Term: Integer read GetTerm;
   end;
 
   TVertexList = class(TObjectList<TVertex>)
@@ -47,6 +68,68 @@ type
 
 implementation
 
+uses
+  System.SysUtils, System.StrUtils;
+
+function TVertex.GetCommonTerm: Boolean;
+begin
+  Result := FCommonTerm;
+end;
+
+procedure TVertex.SetCommonTerm(const Value: Boolean);
+begin
+  FCommonTerm := Value;
+end;
+
+function TVertex.GetCycle: Boolean;
+begin
+  Result := FCycle;
+end;
+
+procedure TVertex.SetCycle(const Value: Boolean);
+begin
+  FCycle := Value;
+end;
+
+function TVertex.GetDFSColor: TDFSColor;
+begin
+  Result := FDFSColor;
+end;
+
+procedure TVertex.SetDFSColor(const Value: TDFSColor);
+begin
+  FDFSColor := Value;
+end;
+
+function TVertex.GetInputIndicatorList: TIndicatorList;
+begin
+  Result := FInputIndicatorList;
+end;
+
+function TVertex.GetName: string;
+begin
+  Result := FName;
+end;
+
+function TVertex.GetNextVertex: TVertexList;
+begin
+  Result := FNextVertex;
+end;
+
+function TVertex.GetOutputIndicatorList: TIndicatorList;
+begin
+  Result := FOutputIndicatorList;
+end;
+
+function TVertex.GetPrevVertex: TVertexList;
+begin
+  Result := FPrevVertex;
+end;
+
+function TVertex.GetTerm: Integer;
+begin
+  Result := FTerm;
+end;
 
 constructor TVertex.Create(const Term: Integer; const Name: string);
 begin
