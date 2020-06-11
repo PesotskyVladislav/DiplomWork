@@ -36,6 +36,8 @@ type
   public
     constructor Create(const Term: Integer; const Name: string);
     destructor Destroy;
+    procedure AddInputIndicator(const ID: Integer; const Description: string);
+    procedure AddOutputIndicator(const ID: Integer; const Description: string);
   end;
 
   TVertexList = class(TObjectList<TVertex>)
@@ -63,6 +65,18 @@ begin
   FOutputIndicatorList.Free;
   FPrevVertex.Free;
   FNextVertex.Free;
+end;
+
+procedure TVertex.AddInputIndicator(const ID: Integer; const Description: string);
+begin
+  var Indicator := TIndicator.Create(ID, Description);
+  FInputIndicatorList.Add(Indicator);
+end;
+
+procedure TVertex.AddOutputIndicator(const ID: Integer; const Description: string);
+begin
+  var Indicator := TIndicator.Create(ID, Description);
+  FOutputIndicatorList.Add(Indicator);
 end;
 
 
