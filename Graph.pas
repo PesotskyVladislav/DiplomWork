@@ -1,4 +1,4 @@
-unit Graph;
+﻿unit Graph;
 
 interface
 
@@ -223,7 +223,7 @@ begin
   Result := Result + 'digraph G { rankdir=LR; node[label=""];';
   for var Vertex in Self do
   begin
-    Result := Result + Vertex.Name + '[label="' + Vertex.Name + '\n' + Vertex.Term.ToString + ' �������"';
+    Result := Result + Vertex.Name + '[label="' + Vertex.Name + '\n' + Vertex.Term.ToString + ' семестр"';
     if Vertex.Cycle then
       Result := Result + ' style="filled" fillcolor="LightBlue"'
     else if Vertex.CommonTerm then

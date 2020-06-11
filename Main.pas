@@ -1,4 +1,4 @@
-unit Main;
+п»їunit Main;
 
 interface
 
@@ -31,31 +31,31 @@ const
 begin
   var VertexList := TVertexList.Create;
   try
-    var Vertex1 := TVertex.Create(1, 'Сложение');
-    Vertex1.AddOutputIndicator(1, 'научились складывать');
+    var Vertex1 := TVertex.Create(1, 'РЎР»РѕР¶РµРЅРёРµ');
+    Vertex1.AddOutputIndicator(1, 'РЅР°СѓС‡РёР»РёСЃСЊ СЃРєР»Р°РґС‹РІР°С‚СЊ');
     VertexList.Add(Vertex1);
 
-    var Vertex2 := TVertex.Create(2, 'Вычитание');
-    Vertex2.AddInputIndicator(1, 'научились складывать');
-    Vertex2.AddInputIndicator(4, 'умеем делить');
-    Vertex2.AddOutputIndicator(2, 'умеем вычитать');
+    var Vertex2 := TVertex.Create(2, 'Р’С‹С‡РёС‚Р°РЅРёРµ');
+    Vertex2.AddInputIndicator(1, 'РЅР°СѓС‡РёР»РёСЃСЊ СЃРєР»Р°РґС‹РІР°С‚СЊ');
+    Vertex2.AddInputIndicator(4, 'СѓРјРµРµРј РґРµР»РёС‚СЊ');
+    Vertex2.AddOutputIndicator(2, 'СѓРјРµРµРј РІС‹С‡РёС‚Р°С‚СЊ');
     VertexList.Add(Vertex2);
 
-    var Vertex3 := TVertex.Create(2, 'Умножение');
-    Vertex3.AddInputIndicator(1, 'научились складывать');
-    Vertex3.AddOutputIndicator(3, 'умеем умножать');
+    var Vertex3 := TVertex.Create(2, 'РЈРјРЅРѕР¶РµРЅРёРµ');
+    Vertex3.AddInputIndicator(1, 'РЅР°СѓС‡РёР»РёСЃСЊ СЃРєР»Р°РґС‹РІР°С‚СЊ');
+    Vertex3.AddOutputIndicator(3, 'СѓРјРµРµРј СѓРјРЅРѕР¶Р°С‚СЊ');
     VertexList.Add(Vertex3);
 
-    var Vertex4 := TVertex.Create(3, 'Деление');
-    Vertex4.AddInputIndicator(1, 'научились складывать');
-    Vertex4.AddInputIndicator(2, 'умеем вычитать');
-    Vertex4.AddInputIndicator(3, 'умеем умножать');
-    Vertex4.AddOutputIndicator(4, 'умеем делить');
+    var Vertex4 := TVertex.Create(3, 'Р”РµР»РµРЅРёРµ');
+    Vertex4.AddInputIndicator(1, 'РЅР°СѓС‡РёР»РёСЃСЊ СЃРєР»Р°РґС‹РІР°С‚СЊ');
+    Vertex4.AddInputIndicator(2, 'СѓРјРµРµРј РІС‹С‡РёС‚Р°С‚СЊ');
+    Vertex4.AddInputIndicator(3, 'СѓРјРµРµРј СѓРјРЅРѕР¶Р°С‚СЊ');
+    Vertex4.AddOutputIndicator(4, 'СѓРјРµРµРј РґРµР»РёС‚СЊ');
     VertexList.Add(Vertex4);
 
-    var Vertex5 := TVertex.Create(1, 'Чтение');
-    Vertex5.AddInputIndicator(1, 'научились складывать');
-    Vertex5.AddOutputIndicator(5, 'умеем читать');
+    var Vertex5 := TVertex.Create(1, 'Р§С‚РµРЅРёРµ');
+    Vertex5.AddInputIndicator(1, 'РЅР°СѓС‡РёР»РёСЃСЊ СЃРєР»Р°РґС‹РІР°С‚СЊ');
+    Vertex5.AddOutputIndicator(5, 'СѓРјРµРµРј С‡РёС‚Р°С‚СЊ');
     VertexList.Add(Vertex5);
 
     VertexList.FillLinks;
