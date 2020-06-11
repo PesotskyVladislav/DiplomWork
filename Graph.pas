@@ -67,8 +67,8 @@ type
   public
     procedure CheckGraph;
     procedure FillLinks;
-    function GetDOT: string;
     function FindVertexByName(const Name: string): TVertex;
+    function GetDOT: string;
   end;
 
 implementation
@@ -76,6 +76,57 @@ implementation
 uses
   System.SysUtils, System.StrUtils;
 
+
+procedure TVertexList.DFS(const CurrentVertex: TVertex);
+begin
+  CurrentVertex.DFSColor := dfsGray;
+  for var NextVertex in CurrentVertex.NextVertex do
+  begin
+    if NextVertex.DFSColor = dfsWhite then
+      DFS(NextVertex);
+    if NextVertex.DFSColor = dfsGray then
+      NextVertex.Cycle := True;
+    if NextVertex.DFSColor = dfsBlack then
+      CurrentVertex.DFSColor := dfsBlack;
+    NextVertex.DFSColor := dfsBlack;
+  end;
+end;
+
+procedure TVertexList.CheckGraph;
+begin
+  for var Vertex in Self do
+  begin
+    if Vertex.PrevVertex.Count > 0 then
+      Continue;
+    DFS(Vertex);
+  end;
+end;
+
+procedure TVertexList.FillLinks;
+begin
+  for var CurrentVertex: TVertex in Self do
+  begin
+    for var OutputIndicator in CurrentVertex.OutputIndicatorList do
+    begin
+      for var NextVertex: TVertex in Self do
+      begin
+        for var InputIndicator in NextVertex.InputIndicatorList do
+        begin
+          if InputIndicator.ID = OutputIndicator.ID then
+          begin
+            CurrentVertex.NextVertex.Add(NextVertex);
+            NextVertex.PrevVertex.Add(CurrentVertex);
+            if CurrentVertex.Term = NextVertex.Term then
+            begin
+              CurrentVertex.CommonTerm := True;
+              NextVertex.CommonTerm := True;
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
 
 function TVertexList.FindVertexByName(const Name: string): TVertex;
 begin
@@ -85,6 +136,24 @@ begin
       Exit(Vertex);
     if Vehicle.VIN.Equals(VinOrFrame) or Vehicle.FRAME.Equals(VinOrFrame) then
       Exit(Vehicle);
+end;
+
+function TVertexList.GetDOT: string;
+begin
+  Result := Result + 'digraph G { rankdir=LR; node[label=""];';
+  for var Vertex in Self do
+  begin
+    Result := Result + Vertex.Name + '[label="' + Vertex.Name + '\n' + Vertex.Term.ToString + ' семестр"';
+    if Vertex.Cycle then
+      Result := Result + ' style="filled" fillcolor="LightBlue"'
+    else if Vertex.CommonTerm then
+      Result := Result + ' style="filled" fillcolor="Moccasin"';
+    Result := Result + '];';
+    var BoldLine := Vertex.Cycle or Vertex.CommonTerm;
+    for var NextVertex in Vertex.NextVertex do
+      Result := Result + Vertex.Name + '->' + NextVertex.Name + IFThen(BoldLine, ' [penwidth=3.0]', '') + ';';
+  end;
+  Result := Result + '}';
 end;
 
 function TVertex.GetCommonTerm: Boolean;
@@ -178,75 +247,6 @@ procedure TVertex.AddOutputIndicator(const ID: Integer; const Description: strin
 begin
   var Indicator := TIndicator.Create(ID, Description);
   FOutputIndicatorList.Add(Indicator);
-end;
-
-procedure TVertexList.DFS(const CurrentVertex: TVertex);
-begin
-  CurrentVertex.DFSColor := dfsGray;
-  for var NextVertex in CurrentVertex.NextVertex do
-  begin
-    if NextVertex.DFSColor = dfsWhite then
-      DFS(NextVertex);
-    if NextVertex.DFSColor = dfsGray then
-      NextVertex.Cycle := True;
-    if NextVertex.DFSColor = dfsBlack then
-      CurrentVertex.DFSColor := dfsBlack;
-    NextVertex.DFSColor := dfsBlack;
-  end;
-end;
-
-procedure TVertexList.CheckGraph;
-begin
-  for var Vertex in Self do
-  begin
-    if Vertex.PrevVertex.Count > 0 then
-      Continue;
-    DFS(Vertex);
-  end;
-end;
-
-procedure TVertexList.FillLinks;
-begin
-  for var CurrentVertex: TVertex in Self do
-  begin
-    for var OutputIndicator in CurrentVertex.OutputIndicatorList do
-    begin
-      for var NextVertex: TVertex in Self do
-      begin
-        for var InputIndicator in NextVertex.InputIndicatorList do
-        begin
-          if InputIndicator.ID = OutputIndicator.ID then
-          begin
-            CurrentVertex.NextVertex.Add(NextVertex);
-            NextVertex.PrevVertex.Add(CurrentVertex);
-            if CurrentVertex.Term = NextVertex.Term then
-            begin
-              CurrentVertex.CommonTerm := True;
-              NextVertex.CommonTerm := True;
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
-
-function TVertexList.GetDOT: string;
-begin
-  Result := Result + 'digraph G { rankdir=LR; node[label=""];';
-  for var Vertex in Self do
-  begin
-    Result := Result + Vertex.Name + '[label="' + Vertex.Name + '\n' + Vertex.Term.ToString + ' семестр"';
-    if Vertex.Cycle then
-      Result := Result + ' style="filled" fillcolor="LightBlue"'
-    else if Vertex.CommonTerm then
-      Result := Result + ' style="filled" fillcolor="Moccasin"';
-    Result := Result + '];';
-    var BoldLine := Vertex.Cycle or Vertex.CommonTerm;
-    for var NextVertex in Vertex.NextVertex do
-      Result := Result + Vertex.Name + '->' + NextVertex.Name + IFThen(BoldLine, ' [penwidth=3.0]', '') + ';';
-  end;
-  Result := Result + '}';
 end;
 
 function TIndicator.GetID: Integer;
