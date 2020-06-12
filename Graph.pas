@@ -3,7 +3,7 @@
 interface
 
 uses
-  System.Generics.Collections;
+  System.Generics.Collections, Data.DB;
 
 type
   TDFSColor = (dfsWhite, dfsGray, dfsBlack);
@@ -64,11 +64,12 @@ type
   TVertexList = class(TObjectList<TVertex>)
   strict private
     procedure DFS(const CurrentVertex: TVertex);
+    function FindVertexByName(const Name: string): TVertex;
   public
     procedure CheckGraph;
     procedure FillLinks;
-    function FindVertexByName(const Name: string): TVertex;
     function GetDOT: string;
+    procedure FillFromDataSet(const DataSet: TDataSet);
   end;
 
 implementation
@@ -76,6 +77,25 @@ implementation
 uses
   System.SysUtils, System.StrUtils;
 
+procedure TVertexList.FillFromDataSet(const DataSet: TDataSet);
+begin
+  DataSet.First;
+  while not DataSet.Eof do
+  begin
+    var DisciplineName := DataSet.FieldByName('discipline_name').AsString;
+    var Vertex: TVertex := VertexList.FindVertexByName(DisciplineName);
+    if not Assigned(Vertex) then
+    begin
+      Vertex := TVertex.Create(DataSet.FieldByName('term_number').AsInteger, DisciplineName);
+      VertexList.Add(Vertex);
+    end;
+    if DataSet.FieldByName('id_indicator_type').AsInteger = 1 then
+      Vertex.AddInputIndicator(DataSet.FieldByName('id_indicator').AsInteger, DataSet.FieldByName('indicator_description').AsString)
+    else
+      Vertex.AddOutputIndicator(DataSet.FieldByName('id_indicator').AsInteger, DataSet.FieldByName('indicator_description').AsString);
+    DataSet.Next;
+  end;
+end;
 
 procedure TVertexList.DFS(const CurrentVertex: TVertex);
 begin
