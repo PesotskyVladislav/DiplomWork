@@ -46,22 +46,7 @@ begin
     ADOStoredProc1.Close;
     ADOStoredProc1.Parameters.ParamByName('@id_plan').Value := cbPlan.DataSource.DataSet.FieldByName('id_plan').AsInteger;
     ADOStoredProc1.Open;
-    ADOStoredProc1.First;
-    while not AdoStoredProc1.Eof do
-    begin
-      var DisciplineName := ADOStoredProc1.FieldByName('discipline_name').AsString;
-      var Vertex: TVertex := VertexList1.FindVertexByName(DisciplineName);
-      if not Assigned(Vertex) then
-      begin
-        Vertex := TVertex.Create(ADOStoredProc1.FieldByName('term_number').AsInteger, DisciplineName);
-        VertexList.Add(Vertex);
-      end;
-      if ADOStoredProc1.FieldByName('id_indicator_type').AsInteger = 1 then
-        Vertex.AddInputIndicator(ADOStoredProc1.FieldByName('id_indicator').AsInteger, ADOStoredProc1.FieldByName('indicator_description').AsString)
-      else
-        Vertex.AddOutputIndicator(ADOStoredProc1.FieldByName('id_indicator').AsInteger, ADOStoredProc1.FieldByName('indicator_description').AsString);
-      AdoStoredProc1.Next;
-    end;
+    VertexList.FillFromDataSet(ADOStoredProc1);
     ADOStoredProc1.Close;
     VertexList.FillLinks;
     VertexList.CheckGraph;
