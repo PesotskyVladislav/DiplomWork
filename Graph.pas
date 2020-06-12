@@ -67,15 +67,48 @@ type
     function FindVertexByName(const Name: string): TVertex;
   public
     procedure CheckGraph;
+    procedure FillFromDataSet(const DataSet: TDataSet);
     procedure FillLinks;
     function GetDOT: string;
-    procedure FillFromDataSet(const DataSet: TDataSet);
   end;
 
 implementation
 
 uses
   System.SysUtils, System.StrUtils;
+
+procedure TVertexList.DFS(const CurrentVertex: TVertex);
+begin
+  CurrentVertex.DFSColor := dfsGray;
+  for var NextVertex in CurrentVertex.NextVertex do
+  begin
+    if NextVertex.DFSColor = dfsWhite then
+      DFS(NextVertex);
+    if NextVertex.DFSColor = dfsGray then
+      NextVertex.Cycle := True;
+    if NextVertex.DFSColor = dfsBlack then
+      CurrentVertex.DFSColor := dfsBlack;
+    NextVertex.DFSColor := dfsBlack;
+  end;
+end;
+
+function TVertexList.FindVertexByName(const Name: string): TVertex;
+begin
+  Result := nil;
+  for var Vertex in Self do
+    if Vertex.Name = Name then
+      Exit(Vertex);
+end;
+
+procedure TVertexList.CheckGraph;
+begin
+  for var Vertex in Self do
+  begin
+    if Vertex.PrevVertex.Count > 0 then
+      Continue;
+    DFS(Vertex);
+  end;
+end;
 
 procedure TVertexList.FillFromDataSet(const DataSet: TDataSet);
 begin
@@ -94,31 +127,6 @@ begin
     else
       Vertex.AddOutputIndicator(DataSet.FieldByName('id_indicator').AsInteger, DataSet.FieldByName('indicator_description').AsString);
     DataSet.Next;
-  end;
-end;
-
-procedure TVertexList.DFS(const CurrentVertex: TVertex);
-begin
-  CurrentVertex.DFSColor := dfsGray;
-  for var NextVertex in CurrentVertex.NextVertex do
-  begin
-    if NextVertex.DFSColor = dfsWhite then
-      DFS(NextVertex);
-    if NextVertex.DFSColor = dfsGray then
-      NextVertex.Cycle := True;
-    if NextVertex.DFSColor = dfsBlack then
-      CurrentVertex.DFSColor := dfsBlack;
-    NextVertex.DFSColor := dfsBlack;
-  end;
-end;
-
-procedure TVertexList.CheckGraph;
-begin
-  for var Vertex in Self do
-  begin
-    if Vertex.PrevVertex.Count > 0 then
-      Continue;
-    DFS(Vertex);
   end;
 end;
 
@@ -146,14 +154,6 @@ begin
       end;
     end;
   end;
-end;
-
-function TVertexList.FindVertexByName(const Name: string): TVertex;
-begin
-  Result := nil;
-  for var Vertex in Self do
-    if Vertex.Name = Name then
-      Exit(Vertex);
 end;
 
 function TVertexList.GetDOT: string;
