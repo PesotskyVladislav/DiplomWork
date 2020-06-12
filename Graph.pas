@@ -134,8 +134,6 @@ begin
   for var Vertex in Self do
     if Vertex.Name = Name then
       Exit(Vertex);
-    if Vehicle.VIN.Equals(VinOrFrame) or Vehicle.FRAME.Equals(VinOrFrame) then
-      Exit(Vehicle);
 end;
 
 function TVertexList.GetDOT: string;
