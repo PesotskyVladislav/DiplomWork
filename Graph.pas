@@ -116,11 +116,11 @@ begin
   while not DataSet.Eof do
   begin
     var DisciplineName := DataSet.FieldByName('discipline_name').AsString;
-    var Vertex: TVertex := VertexList.FindVertexByName(DisciplineName);
+    var Vertex: TVertex := Self.FindVertexByName(DisciplineName);
     if not Assigned(Vertex) then
     begin
       Vertex := TVertex.Create(DataSet.FieldByName('term_number').AsInteger, DisciplineName);
-      VertexList.Add(Vertex);
+      Self.Add(Vertex);
     end;
     if DataSet.FieldByName('id_indicator_type').AsInteger = 1 then
       Vertex.AddInputIndicator(DataSet.FieldByName('id_indicator').AsInteger, DataSet.FieldByName('indicator_description').AsString)
